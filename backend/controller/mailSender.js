@@ -15,7 +15,7 @@ const test = async (req, res) => {
     var mailOptions = {
       from: "youremail@gmail.com",
       to: email,
-      subject: "Sending Email using Node.js",
+      subject: "Verify Email",
       html: `
       <head>
     <style>
@@ -143,4 +143,46 @@ body {
   res.send("OK.");
 };
 
-module.exports = { test };
+const contact = async (req, res) => {
+  const { firstName, lastName, email, country, subject, message } = req.body;
+  console.log(firstName, lastName, email, country, subject, message);
+
+  try {
+    var transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAILUSER,
+        pass: process.env.EMAILPASS,
+      },
+    });
+
+    var mailOptions = {
+      from: email,
+      to: "okanerciyas8@gmail.com",
+      subject: subject,
+      text:
+        "Fistname: " +
+        firstName +
+        "      " +
+        "Lastname: " +
+        lastName +
+        "      " +
+        "Country: " +
+        country +
+        "      " +
+        "Message: " +
+        message,
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = { test, contact };
